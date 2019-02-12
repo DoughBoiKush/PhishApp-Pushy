@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">PhishApp</string>
+    <string name="key_default_username">""</string>
+    <string name="key_default_password">""</string>
+    <string name="action_logout">Logout</string>
+
+
+    <string name="text_username">User Name</string>
+    <string name="text_firstname">First Name</string>
+    <string name="text_lastname">Last Name</string>
+    <string name="text_password">Password</string>
+    <string name="text_email">Email</string>
+    <string name="text_register">REGISTER</string>
+    <string name="text_sign_in">SIGN IN</string>
+    <string name="text_phish_app">Phish App</string>
+    <string name="text_password_retype">Retype Password</string>
+    <string name="key_login_success">Login Success</string>
+    <string name="key_register_success">Register Success</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Phish App</string>
+    <string name="nav_header_subtitle">TCSS 450 Labs.</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="key_credentials_object">Credentials</string>
+    <string name="text_blog_title">Blog Title</string>
+    <string name="text_blog_publish_date">Publish Date</string>
+    <string name="text_blog_teaser">Blog Sample</string>
+    <string name="key_blog_post_object">Blog Post Object</string>
+    <string name="text_fulltext">FULL TEXT</string>
+    <string name="text_set_lists">Set Lists</string>
+    <string name="text_long_date">Long date</string>
+    <string name="text_location">Location</string>
+    <string name="text_setlist_data">Set list data</string>
+    <string name="text_setlist_notes">Setlist Notes</string>
+    <string name="text_setlist_venue">Venue</string>
+    <string name="key_setlist_object">SetList object</string>
+
+</resources>

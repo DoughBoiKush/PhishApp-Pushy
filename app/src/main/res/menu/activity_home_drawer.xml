@@ -16,6 +16,11 @@
             android:id="@+id/nav_set_lists"
             android:icon="@drawable/ic_blog_post_black_24dp"
             android:title="@string/text_set_lists" />
+        <item
+            android:id="@+id/nav_gobal_chat"
+            android:icon="@drawable/ic_blog_post_black_24dp"
+            android:title="@string/text_global_chat" />
+
 
     </group>
 

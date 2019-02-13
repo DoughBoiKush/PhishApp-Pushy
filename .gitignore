@@ -81,3 +81,6 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+app/build.gradle
+build.gradle
+gradle/wrapper/gradle-wrapper.properties

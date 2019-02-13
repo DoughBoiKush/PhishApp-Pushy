@@ -3,6 +3,7 @@ package carga.tcss450.uw.edu.phishapp;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -28,6 +29,7 @@ import carga.tcss450.uw.edu.phishapp.blog.BlogPost;
 import carga.tcss450.uw.edu.phishapp.model.Credentials;
 import carga.tcss450.uw.edu.phishapp.setlist.SetList;
 import carga.tcss450.uw.edu.phishapp.utils.GetAsyncTask;
+import me.pushy.sdk.Pushy;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -39,6 +41,7 @@ public class HomeActivity extends AppCompatActivity
         SetListItemFragment.OnSetListItemFragmentInteractionListener {
 
     private String mJwToken;
+    private String mEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +59,25 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+        if(savedInstanceState == null) {
+            if (findViewById(R.id.frame_main_container) != null) {
+                Credentials credentials = (Credentials) getIntent()
+                        .getSerializableExtra(getString(R.string.keys_intent_credentials));
+                String emailAddress = mEmail = credentials.getEmail();
+                final Bundle args = new Bundle();
+                args.putString(getString(R.string.key_email), emailAddress);
+
+                Fragment fragment;
+                if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_msg), false)) {
+                    fragment = new ChatFragment();
+                } else {
+                    fragment = new SuccessFragment();
+                    fragment.setArguments(args);
+
+                }
+            }
+        }
     }
 
     @Override
@@ -134,6 +156,14 @@ public class HomeActivity extends AppCompatActivity
                     .addHeaderField("authorization", mJwToken) //add the JWT as a header
                     .build();
             b.execute();
+        } else if (id == R.id.nav_gobal_chat) {
+            Credentials credentials = (Credentials) getIntent().getExtras().getSerializable(getString(R.string.keys_intent_credentials));
+            ChatFragment chatFragment = new ChatFragment();
+            Bundle args = new Bundle();
+            args.putSerializable(getString(R.string.keys_intent_credentials), credentials);
+            args.putSerializable(getString(R.string.keys_intent_jwt), mJwToken);
+            chatFragment.setArguments(args);
+            loadFragment(chatFragment);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -344,6 +374,7 @@ public class HomeActivity extends AppCompatActivity
         prefs.edit().remove(getString(R.string.keys_prefs_password)).apply();
         prefs.edit().remove(getString(R.string.keys_prefs_email)).apply();
 
+        new DeleteTokenAsyncTask().execute();
 
         //close the app
         finishAndRemoveTask();
@@ -382,6 +413,52 @@ public class HomeActivity extends AppCompatActivity
 
         }
     }
+
+
+    // Deleting the Pushy device token must be done asynchronously. Good thing
+    // we have something that allows us to do that.
+    class DeleteTokenAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            onWaitFragmentInteractionShow();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            //since we are already doing stuff in the background, go ahead
+            //and remove the credentials from shared prefs here.
+            SharedPreferences prefs =
+                    getSharedPreferences(
+                            getString(R.string.keys_shared_prefs),
+                            Context.MODE_PRIVATE);
+
+            prefs.edit().remove(getString(R.string.keys_prefs_password)).apply();
+            prefs.edit().remove(getString(R.string.keys_prefs_email)).apply();
+
+            //unregister the device from the Pushy servers
+            Pushy.unregister(HomeActivity.this);
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            //close the app
+            finishAndRemoveTask();
+
+            //or close this activity and bring back the Login
+//            Intent i = new Intent(this, MainActivity.class);
+//            startActivity(i);
+//            //Ends this Activity and removes it from the Activity back stack.
+//            finish();
+        }
+    }
+
+
 
     @Override
     public void onSetListButtonFragmentInteraction(View view) {

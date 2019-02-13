@@ -1,4 +1,4 @@
-package carga.tcss450.uw.edu.phishapp;
+package carga.tcss450.uw.edu.phishapp.utils;
 
 import android.app.ActivityManager;
 import android.app.NotificationManager;
@@ -9,8 +9,10 @@ import android.content.BroadcastReceiver;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import instructor.tcss450.uw.edu.phishapp.R;
-import instructor.tcss450.uw.edu.phishapp.home.MainActivity;
+import carga.tcss450.uw.edu.phishapp.MainActivity;
+import carga.tcss450.uw.edu.phishapp.R;
+import carga.tcss450.uw.edu.phishapp.R;
+import carga.tcss450.uw.edu.phishapp.MainActivity;
 import me.pushy.sdk.Pushy;
 
 import static android.app.ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND;
@@ -69,7 +71,7 @@ public class PushReceiver extends BroadcastReceiver {
             //https://developer.android.com/guide/topics/ui/notifiers/notifications
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                     .setAutoCancel(true)
-                    .setSmallIcon(R.drawable.ic_menu_chat_black)
+                    .setSmallIcon(R.drawable.ic_chat_black_24dp)
                     .setContentTitle("Message from: " + sender)
                     .setContentText(messageText)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)

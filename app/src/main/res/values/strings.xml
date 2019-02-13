@@ -3,6 +3,7 @@
     <string name="key_default_username">""</string>
     <string name="key_default_password">""</string>
     <string name="action_logout">Logout</string>
+    <string name="action_settings">Settings</string>
 
 
     <string name="text_username">User Name</string>
@@ -14,15 +15,20 @@
     <string name="text_sign_in">SIGN IN</string>
     <string name="text_phish_app">Phish App</string>
     <string name="text_password_retype">Retype Password</string>
+    <string name="text_global_chat">Global Chat</string>
     <string name="key_login_success">Login Success</string>
     <string name="key_register_success">Register Success</string>
     <string name="title_activity_home">HomeActivity</string>
+
+    <!--  Nav Drawer  -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Phish App</string>
     <string name="nav_header_subtitle">TCSS 450 Labs.</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+
+
+
     <string name="key_credentials_object">Credentials</string>
     <string name="text_blog_title">Blog Title</string>
     <string name="text_blog_publish_date">Publish Date</string>
@@ -36,5 +42,6 @@
     <string name="text_setlist_notes">Setlist Notes</string>
     <string name="text_setlist_venue">Venue</string>
     <string name="key_setlist_object">SetList object</string>
+    <string name="key_email">email_intent</string>
 
 </resources>

@@ -10,17 +10,33 @@ import android.os.Bundle;
 import java.io.Serializable;
 
 import carga.tcss450.uw.edu.phishapp.model.Credentials;
+import me.pushy.sdk.Pushy;
 
 public class MainActivity extends AppCompatActivity implements LoginFragment.OnLoginFragmentInteractionListener, RegisterFragment.OnRegisterFragmentInteractionListener, SuccessFragment.OnSuccessFragmentInteractionListener, WaitFragment.OnFragmentInteractionListener {
+
+
+    private boolean mLoadFromChatNotification = false;
+    private static final String TAG = MainActivity.class.getSimpleName();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Pushy.listen(this);
 
         setContentView(R.layout.activity_main);
+
+        if (getIntent().getExtras() != null) {
+            if (getIntent().getExtras().containsKey("type")) {
+                mLoadFromChatNotification = getIntent().getExtras().getString("type").equals("msg");
+            }
+        }
+
         if (savedInstanceState == null) {
             if (findViewById(R.id.frame_main_container) != null) {
-                getSupportFragmentManager().beginTransaction().add(R.id.frame_main_container, new LoginFragment()).commit();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.frame_main_container, new LoginFragment())
+                        .commit();
             }
         }
     }
@@ -34,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         Intent i = new Intent(this, HomeActivity.class);
         i.putExtra(getString(R.string.keys_intent_credentials), (Serializable) credentials);
         i.putExtra(getString(R.string.keys_intent_jwt), jwt);
+        i.putExtra(getString(R.string.keys_intent_notification_msg), mLoadFromChatNotification);
         startActivity(i);
         //End this Activity and remove it from the Activity back stack.
         finish();

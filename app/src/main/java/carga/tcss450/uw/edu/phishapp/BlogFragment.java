@@ -41,7 +41,6 @@ public class BlogFragment extends Fragment {
     public BlogFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static BlogFragment newInstance(int columnCount) {
         BlogFragment fragment = new BlogFragment();

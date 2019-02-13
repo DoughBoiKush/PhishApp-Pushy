@@ -49,64 +49,35 @@ public class LoginFragment extends Fragment {
     }
 
 
-    private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String> {
-
+    private class RegisterForPushNotificationsAsync extends AsyncTask<Void, String, String>
+    {
         protected String doInBackground(Void... params) {
             String deviceToken = "";
-
             try {
                 // Assign a unique token to this device
                 deviceToken = Pushy.register(getActivity().getApplicationContext());
-
                 //subscribe to a topic (this is a Blocking call)
                 Pushy.subscribe("all", getActivity().getApplicationContext());
             }
             catch (Exception exc) {
-
                 cancel(true);
                 // Return exc to onCancelled
                 return exc.getMessage();
             }
-
-            // Success
+// Success
             return deviceToken;
         }
-
         @Override
         protected void onCancelled(String errorMsg) {
             super.onCancelled(errorMsg);
             Log.d("PhishApp", "Error getting Pushy Token: " + errorMsg);
         }
-
         @Override
         protected void onPostExecute(String deviceToken) {
-            // Log it for debugging purposes
+// Log it for debugging purposes
             Log.d("PhishApp", "Pushy device token: " + deviceToken);
-
-            //build the web service URL
-            Uri uri = new Uri.Builder()
-                    .scheme("https")
-                    .appendPath(getString(R.string.ep_base_url))
-                    .appendPath(getString(R.string.ep_pushy))
-                    .appendPath(getString(R.string.ep_token))
-                    .build();
-
-            //build the JSONObject
-            JSONObject msg = mCredentials.asJSONObject();
-
-            try {
-                msg.put("token", deviceToken);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            //instantiate and execute the AsyncTask.
-            new SendPostAsyncTask.Builder(uri.toString(), msg)
-                    .onPostExecute(LoginFragment.this::handlePushyTokenOnPost)
-                    .onCancelled(LoginFragment.this::handleErrorsInTask)
-                    .addHeaderField("authorization", mJwt)
-                    .build().execute();
-
+            saveCredentials(mCredentials);
+            mListener.onLoginSuccess(mCredentials, mJwt);
         }
     }
 
@@ -168,6 +139,8 @@ public class LoginFragment extends Fragment {
 
             final String email = prefs.getString(getString(R.string.keys_prefs_email), "");
             final String password = prefs.getString(getString(R.string.keys_prefs_password), "");
+            Log.wtf("WTF", "email: " + email);
+            Log.wtf("WTF", "password: " + password);
             //Load the two login EditTexts with the credentials found in SharedPrefs
             EditText emailEdit = getActivity().findViewById(R.id.login_textview_email);
             emailEdit.setText(email);
@@ -251,6 +224,8 @@ public class LoginFragment extends Fragment {
         EditText emailEdit = getActivity().findViewById(R.id.login_textview_email);
         EditText passwordEdit = getActivity().findViewById(R.id.login_textview_password);
 
+        Log.wtf("WTF","Attempt login -> email : pass " + emailEdit.getText().toString() + passwordEdit.getText().toString());
+
         boolean hasError = false;
         if (emailEdit.getText().length() == 0) {
             hasError = true;
@@ -325,13 +300,22 @@ public class LoginFragment extends Fragment {
 
 
     private void saveCredentials(final Credentials credentials) {
-        SharedPreferences prefs =
-                getActivity().getSharedPreferences(
-                        getString(R.string.keys_shared_prefs),
-                        Context.MODE_PRIVATE);
-        //Store the credentials in SharedPrefs
-        prefs.edit().putString(getString(R.string.keys_prefs_email), credentials.getEmail()).apply();
-        prefs.edit().putString(getString(R.string.keys_prefs_password), credentials.getPassword()).apply();
+
+        if (credentials == null) {
+            Log.wtf("WTF", "Credential check is NULL!!!!");
+        }
+
+            SharedPreferences prefs =
+                    getActivity().getSharedPreferences(
+                            getString(R.string.keys_shared_prefs), Context.MODE_PRIVATE);
+            //Store the credentials in SharedPrefs
+
+            if (prefs == null) {
+                Log.wtf("WTF", "PREFS check is NULL!!!!");
+            }
+                prefs.edit().putString(getString(R.string.keys_prefs_email), credentials.getEmail()).apply();
+                prefs.edit().putString(getString(R.string.keys_prefs_password), credentials.getPassword()).apply();
+
     }
 
 
@@ -375,18 +359,12 @@ public class LoginFragment extends Fragment {
             if (success) {
                 //Login was successful. Switch to the loadSuccessFragment.
 
+                mJwt = resultsJSON.getString(getString(R.string.keys_json_login_jwt));
+
                 new RegisterForPushNotificationsAsync().execute();
 
-                mJwt = resultsJSON.getString(
-                        getString(R.string.keys_json_login_jwt));
-
-                saveCredentials(mCredentials);
-                mListener.onLoginSuccess(mCredentials, mJwt);
-
-
-                mListener.onLoginSuccess(mCredentials,
-                        resultsJSON.getString(
-                                getString(R.string.keys_json_login_jwt)));
+//                saveCredentials(mCredentials);
+//                mListener.onLoginSuccess(mCredentials, mJwt);
                 return;
             } else {
                 //Login was unsuccessful. Don’t switch fragments and

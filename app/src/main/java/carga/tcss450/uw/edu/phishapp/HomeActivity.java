@@ -61,6 +61,8 @@ public class HomeActivity extends AppCompatActivity
 
 
         if(savedInstanceState == null) {
+            Log.wtf("WTF", "SavedInstance: NULL");
+
             if (findViewById(R.id.frame_main_container) != null) {
                 Credentials credentials = (Credentials) getIntent()
                         .getSerializableExtra(getString(R.string.keys_intent_credentials));
@@ -71,11 +73,18 @@ public class HomeActivity extends AppCompatActivity
                 Fragment fragment;
                 if (getIntent().getBooleanExtra(getString(R.string.keys_intent_notification_msg), false)) {
                     fragment = new ChatFragment();
+                    fragment.setArguments(args);
+
                 } else {
                     fragment = new SuccessFragment();
                     fragment.setArguments(args);
-
                 }
+
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragmentContainer, fragment)
+                        .commit();
+
+
             }
         }
     }
@@ -158,9 +167,9 @@ public class HomeActivity extends AppCompatActivity
             b.execute();
         } else if (id == R.id.nav_gobal_chat) {
             Credentials credentials = (Credentials) getIntent().getExtras().getSerializable(getString(R.string.keys_intent_credentials));
-            ChatFragment chatFragment = new ChatFragment();
+            Fragment chatFragment = new ChatFragment();
             Bundle args = new Bundle();
-            args.putSerializable(getString(R.string.keys_intent_credentials), credentials);
+            args.putSerializable(getString(R.string.key_email), credentials.getEmail());
             args.putSerializable(getString(R.string.keys_intent_jwt), mJwToken);
             chatFragment.setArguments(args);
             loadFragment(chatFragment);
@@ -168,8 +177,6 @@ public class HomeActivity extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-
-
         return true;
     }
 
@@ -187,10 +194,9 @@ public class HomeActivity extends AppCompatActivity
     private void loadSuccess() {
         Credentials credentials = (Credentials)getIntent()
                 .getExtras().getSerializable(getString(R.string.keys_intent_credentials));
-
         mJwToken = getIntent().getStringExtra(getString(R.string.keys_intent_jwt));
 
-        SuccessFragment successFragment = new SuccessFragment();
+        Fragment successFragment = new SuccessFragment();
         Bundle args = new Bundle();
         args.putSerializable(getString(R.string.keys_intent_credentials), credentials);
         successFragment.setArguments(args);
@@ -272,7 +278,6 @@ public class HomeActivity extends AppCompatActivity
 
                     BlogPost[] blogsAsArray = new BlogPost[blogs.size()];
                     blogsAsArray = blogs.toArray(blogsAsArray);
-
 
                     Bundle args = new Bundle();
                     args.putSerializable(BlogFragment.ARG_BLOG_LIST, blogsAsArray);
@@ -393,6 +398,7 @@ public class HomeActivity extends AppCompatActivity
                 .beginTransaction()
                 .replace(R.id.fragmentContainer, frag)
                 .addToBackStack(null);
+
         // Commit the transaction
         transaction.commit();
     }

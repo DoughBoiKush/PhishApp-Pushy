@@ -19,6 +19,8 @@ import carga.tcss450.uw.edu.phishapp.model.Credentials;
  */
 public class SuccessFragment extends Fragment {
 
+    public static final String TAG = "SUCCESS_FRAG";
+
     private OnSuccessFragmentInteractionListener mListener;
 
     public SuccessFragment() {

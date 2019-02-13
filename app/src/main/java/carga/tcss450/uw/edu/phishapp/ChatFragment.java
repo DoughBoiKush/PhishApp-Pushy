@@ -28,6 +28,28 @@ import carga.tcss450.uw.edu.phishapp.utils.SendPostAsyncTask;
  */
 public class ChatFragment extends Fragment {
 
+
+    /**
+     * A BroadcastReceiver that listens for messages sent from PushReceiver
+     */
+    private class PushMessageReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
+
+                String sender = intent.getStringExtra("SENDER");
+                String messageText = intent.getStringExtra("MESSAGE");
+
+                mMessageOutputTextView.append(sender + ":" + messageText);
+                mMessageOutputTextView.append(System.lineSeparator());
+                mMessageOutputTextView.append(System.lineSeparator());
+            }
+        }
+    }
+
+
+
     private static final String TAG = "CHAT_FRAG";
 
     private static final String CHAT_ID = "1";
@@ -49,11 +71,11 @@ public class ChatFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
         if (getArguments() != null) {
-            mEmail = ((Credentials) getArguments()
-                    .getSerializable(getString(R.string.keys_intent_credentials)))
-                        .getEmail();
-            mJwToken = (String) getArguments().getSerializable(getString(R.string.keys_intent_jwt));
+            //get the email and JWT from the Activity. Make sure the Keys match what you used
+            mEmail = getArguments().getString(getString(R.string.key_email));
+            mJwToken = getArguments().getString(getString(R.string.keys_intent_jwt));
         }
 
         //We will use this url every time the user hits send. Let's only build it once, ya?
@@ -64,10 +86,8 @@ public class ChatFragment extends Fragment {
                 .appendPath(getString(R.string.ep_messaging_send))
                 .build()
                 .toString();
-
-
-        Log.wtf("WTF", "mEmail: " + mEmail + " mJwToken: " + mJwToken);
     }
+
 
 
     @Override
@@ -93,17 +113,15 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View rootLayout = inflater.inflate(R.layout.fragment_chat, container, false);
 
-        mMessageInputEditText = rootLayout.findViewById(R.id.edit_chat_message_input);
         mMessageOutputTextView = rootLayout.findViewById(R.id.text_chat_message_display);
-        rootLayout.findViewById((R.id.button_chat_send)).setOnClickListener(this::handleSendClick);
-
-
+        mMessageInputEditText = rootLayout.findViewById(R.id.edit_chat_message_input);
+        rootLayout.findViewById(R.id.button_chat_send).setOnClickListener(this::handleSendClick);
 
         return rootLayout;
     }
+
 
 
     private void handleSendClick(final View theButton) {
@@ -139,26 +157,6 @@ public class ChatFragment extends Fragment {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-    }
-
-
-    /**
-     * A BroadcastReceiver that listens for messages sent from PushReceiver
-     */
-    private class PushMessageReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.hasExtra("SENDER") && intent.hasExtra("MESSAGE")) {
-
-                String sender = intent.getStringExtra("SENDER");
-                String messageText = intent.getStringExtra("MESSAGE");
-
-                mMessageOutputTextView.append(sender + ": " + messageText);
-                mMessageOutputTextView.append(System.lineSeparator());
-                mMessageOutputTextView.append(System.lineSeparator());
-            }
         }
     }
 

@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.io.Serializable;
 
@@ -44,9 +45,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
 
     @Override
     public void onLoginSuccess(Credentials credentials, String jwt) {
-//        Intent intent = new Intent(this, HomeActivity.class);
-//        intent.putExtra(getString(R.string.keys_intent_jwt), (Serializable) credentials);
-//        startActivity(intent);
         Intent i = new Intent(this, HomeActivity.class);
         i.putExtra(getString(R.string.keys_intent_credentials), (Serializable) credentials);
         i.putExtra(getString(R.string.keys_intent_jwt), jwt);
@@ -54,9 +52,17 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnL
         startActivity(i);
         //End this Activity and remove it from the Activity back stack.
         finish();
-
-
     }
+
+    private void login(final Credentials credentials) {
+        Intent i = new Intent(this, HomeActivity.class);
+        i.putExtra(getString(R.string.key_email), (Serializable) credentials);
+        i.putExtra(getString(R.string.keys_intent_notification_msg), mLoadFromChatNotification);
+        startActivity(i);
+        //Ends this Activity and removes it from the Activity back stack.
+        finish();
+    }
+
 
 
     @Override
